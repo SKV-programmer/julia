@@ -23,6 +23,8 @@ $(SRCCACHE)/$(MBEDTLS_SRC)/source-extracted: $(SRCCACHE)/$(MBEDTLS_SRC).tar.gz
 	$(JLCHECKSUM) $<
 	mkdir -p $(dir $@) && \
 	$(TAR) -C $(dir $@) --strip-components 1 -xf $<
+	# Apply workaround for CMake 3.18.2 bug (https://github.com/ARMmbed/mbedtls/pull/3691).
+	cd $(SRCCACHE)/$(MBEDTLS_SRC) && patch -p1 -f < $(SRCDIR)/patches/mbedtls-cmake-findpy.patch
 	# Force-enable MD4
 	sed "s|//#define MBEDTLS_MD4_C|#define MBEDTLS_MD4_C|" -i $(SRCCACHE)/$(MBEDTLS_SRC)/include/mbedtls/config.h
 	touch -c $(SRCCACHE)/$(MBEDTLS_SRC)/CMakeLists.txt # old target
